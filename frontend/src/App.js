@@ -1,20 +1,20 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
-import PromptCreate from "./components/Prompts/PromptCreate";
-import PromptList from "./components/Prompts/PromptList";
+import PromptsPage from "./components/Prompts/PromptsPage";
+
 
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
+
       <Routes>
+        <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/prompts" element={<PromptList />} />
-        <Route path="/generate" element={<PromptCreate />} />
+        <Route path="/prompts" element={<PromptsPage />} />
+        <Route path="/generate" element={<PromptsPage />} />
       </Routes>
     </BrowserRouter>
   );

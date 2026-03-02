@@ -1,27 +1,31 @@
 import React, { useEffect, useState } from "react";
 import API from "../../services/api";
 
-function PromptList() {
-  const [prompts, setPrompts] = useState([]);
+export default function PromptCreate({ onCreated }) {
+  const [input, setInput] = useState("");
 
-  const fetchPrompts = async () => {
-    const res = await API.get("/prompts/my/");
-    setPrompts(res.data.results);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await API.post("/prompts/generate/", {
+        raw_input: input,
+        ai_target: "gpt",
+        mode: "standard",
+        character_limit: 1500,
+      });
+      onCreated(); // poziva fetchPrompts iz parent-a
+    } catch (err) {
+      alert("Error generating prompt");
+    }
   };
 
-  useEffect(() => {
-    fetchPrompts();
-  }, []);
-
   return (
-    <div>
-      {prompts.map(p => (
-        <div key={p.id}>
-          <p>{p.generated_prompt}</p>
-        </div>
-      ))}
-    </div>
+    <form onSubmit={handleSubmit}>
+      <textarea
+        placeholder="Enter prompt description…"
+        onChange={(e) => setInput(e.target.value)}
+      />
+      <button type="submit">Generate Prompt</button>
+    </form>
   );
 }
-
-export default PromptList;
