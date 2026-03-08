@@ -108,3 +108,68 @@ class DeletePromptView(APIView):
 
         prompt.delete()
         return Response({"success": "Prompt deleted"}, status=status.HTTP_200_OK)
+
+
+def build_prompt(user_input, ai_target="gpt", limit=1500):
+
+    prompt = f"""
+You are a professional prompt engineer.
+
+Convert the user request into a detailed AI prompt.
+
+User request:
+{user_input}
+
+Create a structured prompt with:
+- clear objective
+- step-by-step instructions
+- design or implementation details
+- expected output
+
+Return only the final prompt.
+"""
+
+    return prompt[:limit]
+
+class PromptGenerateView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+
+        raw_input = request.data.get("raw_input")
+        ai_target = request.data.get("ai_target", "gpt")
+        limit = int(request.data.get("character_limit", 1500))
+
+        # ovde pravimo prompt
+        generated_prompt = f"""
+You are a professional prompt engineer.
+
+Convert the following request into a highly detailed AI prompt.
+
+User request:
+{raw_input}
+
+Create a structured prompt that includes:
+- clear objective
+- requirements
+- steps
+- expected output
+
+Target AI: {ai_target}
+"""
+
+        generated_prompt = generated_prompt.strip()[:limit]
+
+        # sačuvaj u bazu
+        prompt = Prompt.objects.create(
+            user=request.user,
+            raw_input=raw_input,
+            generated_prompt=generated_prompt,
+            ai_target=ai_target,
+            character_limit=limit,
+        )
+
+        serializer = PromptSerializer(prompt)
+
+        return Response(serializer.data)

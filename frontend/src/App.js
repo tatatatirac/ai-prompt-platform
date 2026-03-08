@@ -1,21 +1,29 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 import PromptsPage from "./components/Prompts/PromptsPage";
-
+import DashboardLayout from "./layout/DashboardLayout";
 
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
 
       <Routes>
+
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/prompts" element={<PromptsPage />} />
-        <Route path="/generate" element={<PromptsPage />} />
+
+        <Route
+          path="/prompts"
+          element={
+            <DashboardLayout>
+              <PromptsPage />
+            </DashboardLayout>
+          }
+        />
+
       </Routes>
+
     </BrowserRouter>
   );
 }
